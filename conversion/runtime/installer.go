@@ -28,11 +28,11 @@ func (d *Installer) Start() {
 		if d.config.EnableInstaller {
 			d.updatePackageList()
 			d.installCoreTools()
-			d.installGltfPipeline()
-			d.installBlender()
-			d.installLibreOffice()
+			// d.installGltfPipeline()
+			// d.installBlender()
+			// d.installLibreOffice()
 			d.installTesseract()
-			d.installFonts()
+			// d.installFonts()
 		}
 		d.isRunning = false
 	}()

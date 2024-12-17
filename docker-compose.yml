@@ -87,6 +87,7 @@ services:
       - SMTP_PASSWORD=${VOLTASERVE_SMTP_PASSWORD}
       - SMTP_SENDER_ADDRESS=${VOLTASERVE_SMTP_SENDER_ADDRESS}
       - SMTP_SENDER_NAME=${VOLTASERVE_SMTP_SENDER_NAME}
+      - OPENAI_API_KEY=${VOLTASERVE_OPENAI_API_KEY}
     healthcheck:
       test: wget --quiet --spider http://127.0.0.1:8080/v3/health || exit 1
     depends_on:
