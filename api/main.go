@@ -113,6 +113,9 @@ func main() {
 	groups := router.NewGroupRouter()
 	groups.AppendRoutes(v3.Group("groups"))
 
+	chat := router.NewChatRouter()
+	chat.AppendRoutes(v3.Group("chat"))
+
 	if err := app.Listen(fmt.Sprintf(":%d", cfg.Port)); err != nil {
 		panic(err)
 	}

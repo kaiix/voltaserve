@@ -7,9 +7,9 @@
 // the Business Source License, use of this software will be governed
 // by the GNU Affero General Public License v3.0 only, included in the file
 // AGPL-3.0-only in the root of this repository.
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
-import { Button } from '@chakra-ui/react'
+import { Button, Box, Tabs, TabList, TabPanels, TabPanel, Tab } from '@chakra-ui/react'
 import { Sidenav, IconDownload, Spinner } from '@koupr/ui'
 import cx from 'classnames'
 import { Helmet } from 'react-helmet-async'
@@ -21,6 +21,7 @@ import ViewerModel from '@/components/viewer/viewer-model'
 import ViewerMosaic from '@/components/viewer/viewer-mosaic'
 import ViewerPDF from '@/components/viewer/viewer-pdf'
 import ViewerVideo from '@/components/viewer/viewer-video'
+import ChatPanel from '@/components/chat/ChatPanel'
 import downloadFile from '@/lib/helpers/download-file'
 import {
   isGLB,
@@ -41,16 +42,16 @@ const ViewerPage = () => {
   const hasPDF = useMemo(() => {
     return Boolean(
       file?.snapshot &&
-        ((file.snapshot.original && isPDF(file.snapshot.original.extension)) ||
-          (file.snapshot.preview && isPDF(file.snapshot.preview.extension))),
+      ((file.snapshot.original && isPDF(file.snapshot.original.extension)) ||
+        (file.snapshot.preview && isPDF(file.snapshot.preview.extension))),
     )
   }, [file, location])
   const hasImage = useMemo(
     () =>
       Boolean(
         file?.snapshot &&
-          file.snapshot?.original &&
-          isImage(file.snapshot?.original.extension),
+        file.snapshot?.original &&
+        isImage(file.snapshot?.original.extension),
       ),
     [file],
   )
@@ -127,6 +128,15 @@ const ViewerPage = () => {
       hasGLB,
     ],
   )
+
+  if (!file) {
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <Spinner />
+      </div>
+    )
+  }
+
   const isTheaterMode = hasVideo || (hasImage && !hasMosaicImage)
 
   return (
@@ -138,32 +148,38 @@ const ViewerPage = () => {
           </Helmet>
           <div className={cx('flex', 'flex-row', 'gap-0', 'h-full')}>
             <Sidenav storage={{ prefix: 'voltaserve', namespace: 'viewer' }}>
-              <DrawerContent file={file} />
+              <Box h="full" maxWidth="400px">
+                <Tabs>
+                  <TabList>
+                    <Tab>Info</Tab>
+                    {hasPDF && <Tab>Chat</Tab>}
+                  </TabList>
+                  <TabPanels>
+                    <TabPanel>
+                      <DrawerContent file={file} />
+                    </TabPanel>
+                    {hasPDF && (
+                      <TabPanel>
+                        <ChatPanel fileId={file.id} />
+                      </TabPanel>
+                    )}
+                  </TabPanels>
+                </Tabs>
+              </Box>
             </Sidenav>
             <div
               className={cx(
-                'relative',
                 'flex',
-                'flex-col',
-                'gap-0',
-                'grow',
-                'h-[100vh]',
+                'items-center',
+                'justify-center',
+                'w-full',
+                'h-full',
+                'overflow-hidden',
+                'relative',
+                { 'bg-black': isTheaterMode },
               )}
             >
-              <div
-                className={cx(
-                  'flex',
-                  'items-center',
-                  'justify-center',
-                  'w-full',
-                  'h-full',
-                  'overflow-hidden',
-                  'relative',
-                  { 'bg-black': isTheaterMode },
-                )}
-              >
-                {renderViewer(file)}
-              </div>
+              {renderViewer(file)}
             </div>
           </div>
         </>
