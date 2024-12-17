@@ -77,7 +77,7 @@ export default function ChatPanel({ fileId }: Props) {
   }
 
   return (
-    <Box h="full" display="flex" flexDirection="column">
+    <Box h="100%" display="flex" flexDirection="column">
       <Flex p={4} borderBottomWidth={1} borderColor={borderColor}>
         <Input
           value={question}
@@ -105,7 +105,9 @@ export default function ChatPanel({ fileId }: Props) {
         spacing={4}
         p={4}
         alignItems="stretch"
+        maxH="calc(100vh - 180px)"
       >
+        <div ref={messagesEndRef} />
         {messages.map((message) => (
           <Box
             key={message.id}
@@ -126,7 +128,6 @@ export default function ChatPanel({ fileId }: Props) {
             )}
           </Box>
         ))}
-        <div ref={messagesEndRef} />
       </VStack>
     </Box>
   )
