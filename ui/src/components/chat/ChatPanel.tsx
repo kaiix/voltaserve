@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/react'
 import { ChatMessage } from '@/types/chat'
 import { apiFetcher } from '@/client/fetcher'
+import ReactMarkdown from 'react-markdown'
 
 interface Props {
   fileId: string
@@ -118,7 +119,11 @@ export default function ChatPanel({ fileId }: Props) {
             borderWidth={message.role === 'assistant' ? 1 : 0}
             borderColor={borderColor}
           >
-            <Text>{message.content}</Text>
+            {message.role === 'assistant' ? (
+              <ReactMarkdown>{message.content}</ReactMarkdown>
+            ) : (
+              <Text>{message.content}</Text>
+            )}
           </Box>
         ))}
         <div ref={messagesEndRef} />
