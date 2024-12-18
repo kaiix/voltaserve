@@ -30,7 +30,7 @@ func (d *Installer) Start() {
 			d.installCoreTools()
 			// d.installGltfPipeline()
 			// d.installBlender()
-			// d.installLibreOffice()
+			d.installLibreOffice()
 			d.installTesseract()
 			// d.installFonts()
 		}
