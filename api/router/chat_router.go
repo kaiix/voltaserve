@@ -9,6 +9,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/kouprlabs/voltaserve/api/config"
 	"github.com/kouprlabs/voltaserve/api/errorpkg"
+	"github.com/kouprlabs/voltaserve/api/log"
 	"github.com/kouprlabs/voltaserve/api/service"
 )
 
@@ -31,6 +32,7 @@ func (r *ChatRouter) AppendRoutes(router fiber.Router) {
 type ChatWithFileOptions struct {
 	FileID  string `json:"fileId" validate:"required"`
 	Message string `json:"message" validate:"required"`
+	Model   string `json:"model"`
 }
 
 func (r *ChatRouter) ChatWithFile(c *fiber.Ctx) error {
@@ -51,7 +53,8 @@ func (r *ChatRouter) ChatWithFile(c *fiber.Ctx) error {
 		return err
 	}
 
-	message, err := r.chatSvc.Chat(opts.FileID, userID, opts.Message)
+	log.GetLogger().Debugf("opts: %v", opts)
+	message, err := r.chatSvc.Chat(opts.FileID, userID, opts.Message, opts.Model)
 	if err != nil {
 		return err
 	}

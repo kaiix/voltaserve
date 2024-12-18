@@ -7,6 +7,7 @@ import {
   Text,
   VStack,
   useColorModeValue,
+  Select,
 } from '@chakra-ui/react'
 import { ChatMessage } from '@/types/chat'
 import { apiFetcher } from '@/client/fetcher'
@@ -23,6 +24,18 @@ export default function ChatPanel({ fileId }: Props) {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const bgColor = useColorModeValue('white', 'gray.800')
   const borderColor = useColorModeValue('gray.200', 'gray.600')
+  const [selectedModel, setSelectedModel] = useState('gpt-4o-mini')
+
+  // Define available models
+  const models = [
+    { id: 'gpt-4o-mini', name: 'GPT-4o Mini', value: 'openai/gpt-4o-mini' },
+    { id: 'gpt-4o', name: 'GPT-4o', value: 'openai/chatgpt-4o-latest' },
+    { id: 'llama-3.1-8b', name: 'Llama 3.1 8B', value: 'meta-llama/llama-3.1-8b-instruct' },
+    { id: 'llama-3.3-70b', name: 'Llama 3.3 70B', value: 'meta-llama/llama-3.3-70b-instruct' },
+    { id: 'qwen-2.5-7b', name: 'Qwen 2.5 7B', value: 'qwen/qwen-2.5-7b-instruct' },
+    { id: 'qwen-qwq-32b', name: 'Qwen QWQ 32B', value: 'qwen/qwq-32b-preview' },
+    { id: 'qwen-2.5-32b-coder', name: 'Qwen 2.5 32B Coder', value: 'qwen/qwen-2.5-coder-32b-instruct' },
+  ]
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -54,6 +67,7 @@ export default function ChatPanel({ fileId }: Props) {
         body: JSON.stringify({
           fileId,
           message: question,
+          model: models.find(m => m.id === selectedModel)?.value,
         }),
       })
 
@@ -78,27 +92,43 @@ export default function ChatPanel({ fileId }: Props) {
 
   return (
     <Box h="100%" display="flex" flexDirection="column">
-      <Flex p={4} borderBottomWidth={1} borderColor={borderColor}>
-        <Input
-          value={question}
-          onChange={(e) => setQuestion(e.target.value)}
-          placeholder="Ask a question..."
-          onKeyPress={(e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-              e.preventDefault()
-              handleSendMessage()
-            }
-          }}
-          mr={2}
-        />
-        <Button
-          colorScheme="blue"
-          onClick={handleSendMessage}
-          isLoading={isLoading}
+      <Box p={4} borderBottomWidth={1} borderColor={borderColor}>
+        <Select
+          value={selectedModel}
+          onChange={(e) => setSelectedModel(e.target.value)}
+          width="300px"
+          mb={4}
+          borderRadius="full"
         >
-          Send
-        </Button>
-      </Flex>
+          {models.map((model) => (
+            <option key={model.id} value={model.id}>
+              {model.name}
+            </option>
+          ))}
+        </Select>
+        <Flex>
+          <Input
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            placeholder="Ask a question..."
+            onKeyPress={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault()
+                handleSendMessage()
+              }
+            }}
+            mr={2}
+            flex={1}
+          />
+          <Button
+            colorScheme="blue"
+            onClick={handleSendMessage}
+            isLoading={isLoading}
+          >
+            Send
+          </Button>
+        </Flex>
+      </Box>
       <VStack
         flex="1"
         overflowY="auto"

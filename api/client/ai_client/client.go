@@ -37,13 +37,15 @@ func NewClient() *Client {
 	return &Client{
 		httpClient: &http.Client{},
 		apiKey:     os.Getenv("OPENAI_API_KEY"),
-		baseURL:    "https://api.openai.com/v1",
+		baseURL:    os.Getenv("OPENAI_BASE_URL"),
 	}
 }
 
 var logger = log.GetLogger()
 
-func (c *Client) Chat(context, question string) (string, error) {
+const defaultModel = "openai/gpt-4o-mini"
+
+func (c *Client) Chat(context, question string, modelName string) (string, error) {
 	messages := []ChatMessage{
 		{
 			Role:    "system",
@@ -55,10 +57,14 @@ func (c *Client) Chat(context, question string) (string, error) {
 		},
 	}
 
+	if modelName == "" {
+		modelName = defaultModel
+	}
+
 	logger.Debugf("messages: %v", messages)
 
 	reqBody := ChatRequest{
-		Model:       "gpt-4o-mini",
+		Model:       modelName,
 		Messages:    messages,
 		Temperature: 0,
 	}

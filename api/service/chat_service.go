@@ -25,7 +25,7 @@ func NewChatService() *ChatService {
 	}
 }
 
-func (s *ChatService) Chat(fileID string, userID string, question string) (*model.ChatMessage, error) {
+func (s *ChatService) Chat(fileID string, userID string, question string, modelName string) (*model.ChatMessage, error) {
 	// Get file content
 	buf, _, _, err := s.insightsSvc.DownloadTextBuffer(fileID, userID)
 	log.GetLogger().Info("file content: %v", buf.String())
@@ -33,8 +33,8 @@ func (s *ChatService) Chat(fileID string, userID string, question string) (*mode
 		return nil, fmt.Errorf("failed to get file content: %v", err)
 	}
 
-	// Get AI response
-	answer, err := s.aiClient.Chat(buf.String(), question)
+	// Get AI response with model
+	answer, err := s.aiClient.Chat(buf.String(), question, modelName)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get AI response: %v", err)
 	}
