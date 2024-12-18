@@ -37,7 +37,7 @@ func NewClient() *Client {
 	return &Client{
 		httpClient: &http.Client{},
 		apiKey:     os.Getenv("OPENAI_API_KEY"),
-		baseURL:    "https://api.openai.com/v1",
+		baseURL:    os.Getenv("OPENAI_BASE_URL"),
 	}
 }
 
@@ -58,7 +58,7 @@ func (c *Client) Chat(context, question string) (string, error) {
 	logger.Debugf("messages: %v", messages)
 
 	reqBody := ChatRequest{
-		Model:       "gpt-4o-mini",
+		Model:       "openai/gpt-4o-mini",
 		Messages:    messages,
 		Temperature: 0,
 	}
